@@ -1,39 +1,53 @@
 import './App.css';
 import {useEffect, useState} from "react";
-import {RikiMortyFetch} from "./resurs/RikiMortyFetch";
-import {simpsonsArr} from "./resurs/Simpsons";
-import {RikiMorty, Simpsons} from "./components/Heroes";
+import {GetUser, GetUsers} from "./resurs/Api";
+import {User} from "./components/User";
 
-// 1. Описати всю сім'ю сімпсонів (5 персонажів)
-//
-// 2. Створити компонент який описує персонажа (властивості id,name,status,species,gender,image) з цього апі
-// https://rickandmortyapi.com/
-//     https://rickandmortyapi.com/api/character
-//         Створити 6 персонажів
 
-function App(){
-    let [heroes, setHeroes] = useState([])
+function App() {
+
+    let [users, setUsers] = useState([])
+    let [userID, setUserID] = useState([])
     useEffect(()=>{
-        RikiMortyFetch().then(value => {
-            value.results.splice(6,20)
-            setHeroes(value.results)})},[])
-    return(
-        <div>
-            <div className='simpson'>
-                <h1>Simpsons</h1>
-                {
-                    simpsonsArr.map((value,index) => ({id: index+1,name:value.name,surname:value.surname,age:value.age,photo:value.photo,info:value.info }))
-                                .map(value => <Simpsons key={value.id} value={value}/>)
-                }
+        GetUsers().then(value => {
+            setUsers(value)})},[])
+
+    function Click(id){
+            GetUser(id).then(value => {
+                console.log(value)
+                setUserID(value)
+        })
+    }
+
+    return (
+
+        <div className="App">
+            <div>
+                <h2>Username: {userID.username} </h2>
+                <h2>Phone: {userID.phone}</h2>
+                <h2>Email: {userID.email}</h2>
+                <h2>Site: {userID.website} </h2>
             </div>
-            <div className='rikiMorty'>
-                <h1>Rick & Morty</h1>
-                {
-                    heroes.map(value => <RikiMorty key={value.id} value={value}/>)
-                }
-            </div>
+
+            {
+                users.map(value => <User key={value.id} user={value} clickId={Click}/>)
+            }
         </div>
-    )
+    );
 }
+
 export default App;
 
+
+//
+// з jsonplaceholder отримати всіх юзерів в компоненту Users.js
+// відобразити кожного інформацію (id,name) з кожного юзера (компонента User)
+// Зробити кнопку вибора юзера, при натисканні на яку в Users.js ви покажете детальну інфомацію про користувача(довільно обрану інформацію)
+//https://jsonplaceholder.typicode.com/users
+//
+//
+// =====
+// є API от SpaceX
+// https://api.spacexdata.com/v3/launches/
+//     потрібно вивести всі запуски кораблів окрім 2020 року
+// репрезентувати тільки окремі поля (зазначені в скрнішоті в папці)
